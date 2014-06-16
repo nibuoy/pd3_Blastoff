@@ -52,9 +52,18 @@ void speed(int i){
 
 void draw(){
   background(0);
+  textSize(12);
+  text("Run Speed: " + spd/60 + "x",400,100);
+  if (s.dead){
+    fill(255,0,0);
+    textSize(50);
+    text("YOU CRASHED!",70,140);
+  }
   p.display();
   s.display();
   s.move();
+  fill(255);
+
 }
 
 
