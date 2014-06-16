@@ -3,6 +3,7 @@ class Ship{
  Planet earth;
  PVector r,v,a;
  float fuel,throttle,face;
+ boolean dead;
  
  Ship(Planet plnt){
   // setup original stuff 
@@ -12,25 +13,33 @@ class Ship{
  fuel = 100;
  throttle = 0;
  face = 0;
+ dead = false;
  earth = plnt;
  }
  
  void move(){
-  r.add(v); 
-  v.add(a);
-  if(altitude() < 250.0001){
-    a.set(0,0);
-  }else{
-    a.set(earth.accel(r));
-  }
-  if (fuel > 0){
-    PVector thrust = new PVector(sin(radians(face)),-cos(radians(face)));
-    float c = throttle / 50000;
-    a.add(PVector.mult(thrust,c));
-    fuel -= throttle/1000;
-  }else{
-    fuel = 0.000;
-  }
+   if (!dead){
+     
+     r.add(v); 
+     v.add(a);
+     if(altitude() < 250.0001){
+       a.set(0,0);
+       if (v.mag() > .1){
+         v.set(0,0);
+         dead = true;
+       }
+     }else{
+       a.set(earth.accel(r));
+     }
+     if (fuel > 0){
+       PVector thrust = new PVector(sin(radians(face)),-cos(radians(face)));
+       float c = throttle / 50000;
+       a.add(PVector.mult(thrust,c));
+       fuel -= throttle/1000;
+     }else{
+       fuel = 0.000;
+     }
+   }
  }
  
  void throt(int i){
@@ -70,9 +79,18 @@ class Ship{
  void display(){
    fill(255);
    textSize(12);
-   text("Fuel: " + str(fuel).substring(0,4) + "%",400,20);
+   if (fuel>0){
+     text("Fuel: " + str(fuel).substring(0,4) + "%",400,20);
+   }else{
+     text("Fuel: 0%",400,20);
+   }
    text("Throttle: " + str(throttle).substring(0,3) + "%",400,40);
-   text("Altitude: " + str(altitude()).substring(0,3),400,60);
+   text("Altitude: " + str(altitude()).substring(0,5),400,60);
+   if (v.mag()>.01){
+     text("Velocity: " + str(v.mag()*1000).substring(0,4),400,80);
+   }else{
+     text("Velocity: 0",400,80);
+   } 
    
    stroke(255,0,0);
    line(r.x/4,r.y/4,r.x/4 + 100*v.x, r.y/4 + 100*v.y);
@@ -83,11 +101,9 @@ class Ship{
    triangle(0,-5,-4,5,4,5);
    //println("r: " + r.x + "," + r.y);
    //println("v: " + v.x + "," + v.y);
-   println("a: " + a.x + "," + a.y);
+   //println("a: " + a.x + "," + a.y);
    //println(earth.pe(r) + v.magSq() * .5);
-   //stroke (255);
    stroke(0);
-   //println(throttle);
  }
  
 }
