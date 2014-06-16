@@ -27,5 +27,8 @@ class Planet{
  void display(){
   fill(0,100,0);
   ellipse(pos.x/4,pos.y/4,diameter/4,diameter/4);
+  fill(255);
+  textSize(16);
+  text("Earth",230,257);
  }
 }
